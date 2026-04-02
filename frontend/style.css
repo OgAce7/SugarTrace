@@ -1,14 +1,12 @@
-/* style.css - Minimalist Healthcare Theme */
-
 :root {
-    --primary: #2c7be5;       /* Trustworthy Blue */
+    --primary: #2c7be5;       
     --primary-soft: #e8f4fd;
-    --success: #28a745;       /* Healthy Green */
-    --danger: #dc3545;        /* Alert Red */
-    --warning: #ffc107;       /* Caution Yellow */
-    --text-main: #2d3436;     /* Dark Charcoal */
-    --text-muted: #636e72;    /* Soft Gray */
-    --bg-body: #f4f7f6;       /* Very light mint/gray */
+    --success: #28a745;       
+    --danger: #dc3545;        
+    --warning: #ffc107;       
+    --text-main: #2d3436;     
+    --text-muted: #636e72;    
+    --bg-body: #f4f7f6;      
     --card-bg: #ffffff;
 }
 
@@ -19,18 +17,17 @@
 }
 
 body {
-    min-height: 100vh; /* Tells the body to be at least as tall as the screen */
+    min-height: 100vh; 
     display: flex;
     flex-direction: column;
 }
 
-/* Header - Modern Gradient */
 .header {
     background: linear-gradient(135deg, var(--primary) 0%, #1a68d1 100%);
     color: white;
     text-align: center;
     padding: 60px 20px;
-    margin-bottom: -40px; /* Pulls container up */
+    margin-bottom: -40px;
 }
 
 .header h1 {
@@ -44,14 +41,12 @@ body {
     opacity: 0.9;
 }
 
-/* Main Container - Elevated Card Look */
 .container {
     max-width: 800px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* Sections - Consistent Card Style */
 .model-selector, .form-section, .result-box, .info-box {
     background: var(--card-bg);
     padding: 30px;
@@ -61,7 +56,6 @@ body {
     margin-bottom: 25px;
 }
 
-/* Form Grid */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -73,7 +67,6 @@ body {
     .form-grid { grid-template-columns: 1fr; }
 }
 
-/* Inputs */
 .form-group label {
     font-size: 0.9rem;
     font-weight: 600;
@@ -102,7 +95,6 @@ body {
     margin-top: 4px;
 }
 
-/* Buttons */
 .button-row {
     display: flex;
     gap: 15px;
@@ -133,7 +125,6 @@ button {
 
 button:hover { transform: translateY(-1px); filter: brightness(95%); }
 
-/* Results Styling */
 .result-label {
     font-size: 1.8rem;
     padding: 20px;
@@ -151,7 +142,6 @@ button:hover { transform: translateY(-1px); filter: brightness(95%); }
     border-radius: 8px;
 }
 
-/* Risk Bar */
 .risk-bar-bg {
     background: #edf2f7;
     height: 12px;
@@ -163,7 +153,6 @@ button:hover { transform: translateY(-1px); filter: brightness(95%); }
     background: linear-gradient(to right, var(--success), var(--warning), var(--danger));
 }
 
-/* Footer */
 .footer {
     background: #2d3436;
     border-top: 4px solid var(--highlight); /* Connects footer to the theme */
