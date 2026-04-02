@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SugarTrace - Diabetes Prediction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="header">
+        <h1>🩺 SugarTrace</h1>
+        <p>Diabetes Prediction System using Machine Learning</p>
+        <small>Uses Pima Indians Diabetes Dataset | Logistic Regression & Random Forest</small>
+    </div>
+
+    <div class="container">
+
+        <!-- Model selector -->
+        <div class="model-selector">
+            <label><b>Select Model:</b></label>
+            <select id="modelSelect">
+                <option value="random_forest">Random Forest</option>
+                <option value="logistic_regression">Logistic Regression</option>
+            </select>
+            <button onclick="loadModelInfo()" class="btn-small">View Model Stats</button>
+        </div>
+
+        <!-- Model stats box (hidden by default) -->
+        <div id="modelInfoBox" class="info-box" style="display:none;">
+            <h3>Model Performance (on test data)</h3>
+            <div id="modelInfoContent">Loading...</div>
+        </div>
+
+        <!-- Input form -->
+        <div class="form-section">
+            <h2>Enter Patient Details</h2>
+            <p style="color: gray; font-size: 13px;">Fill in all the values below. For unknown values, use average estimates.</p>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Pregnancies</label>
+                    <input type="number" id="Pregnancies" placeholder="e.g. 2" min="0" max="20">
+                    <small>Number of times pregnant</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Glucose Level (mg/dL)</label>
+                    <input type="number" id="Glucose" placeholder="e.g. 120" min="0" max="300">
+                    <small>Plasma glucose concentration</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Blood Pressure (mm Hg)</label>
+                    <input type="number" id="BloodPressure" placeholder="e.g. 70" min="0" max="200">
+                    <small>Diastolic blood pressure</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Skin Thickness (mm)</label>
+                    <input type="number" id="SkinThickness" placeholder="e.g. 20" min="0" max="100">
+                    <small>Triceps skin fold thickness</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Insulin (μU/mL)</label>
+                    <input type="number" id="Insulin" placeholder="e.g. 80" min="0" max="900">
+                    <small>2-hour serum insulin</small>
+                </div>
+
+                <div class="form-group">
+                    <label>BMI (kg/m²)</label>
+                    <input type="number" id="BMI" placeholder="e.g. 25.5" step="0.1" min="0" max="70">
+                    <small>Body mass index</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Diabetes Pedigree Function</label>
+                    <input type="number" id="DiabetesPedigreeFunction" placeholder="e.g. 0.5" step="0.001" min="0" max="3">
+                    <small>Genetic risk function score</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Age (years)</label>
+                    <input type="number" id="Age" placeholder="e.g. 35" min="1" max="120">
+                    <small>Patient age</small>
+                </div>
+
+            </div>
+
+            <div class="button-row">
+                <button onclick="predict()" class="btn-predict">🔍 Predict</button>
+                <button onclick="fillExample()" class="btn-example">Load Example Data</button>
+                <button onclick="clearForm()" class="btn-clear">Clear</button>
+            </div>
+        </div>
+
+        <!-- Result box -->
+        <div id="resultBox" class="result-box" style="display:none;">
+            <h2>Prediction Result</h2>
+
+            <div id="resultLabel" class="result-label"></div>
+
+            <div class="result-details">
+                <div class="detail-item">
+                    <span class="detail-title">Risk Score (Probability)</span>
+                    <span id="probScore" class="detail-value"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-title">Risk Level</span>
+                    <span id="riskLevel" class="detail-value"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-title">Model Used</span>
+                    <span id="modelUsed" class="detail-value"></span>
+                </div>
+            </div>
+
+            <!-- Risk bar -->
+            <div class="risk-bar-container">
+                <label>Risk Bar:</label>
+                <div class="risk-bar-bg">
+                    <div id="riskBar" class="risk-bar-fill"></div>
+                </div>
+                <span id="riskBarLabel"></span>
+            </div>
+
+            <!-- Feature importance (only for RF) -->
+            <div id="featureImportanceSection" style="display:none;">
+                <h3>Feature Importance (Random Forest)</h3>
+                <p style="font-size:13px; color:gray;">Which features affected this prediction the most:</p>
+                <div id="featureImportanceList"></div>
+            </div>
+
+            <div class="disclaimer">
+                ⚠️ This is a machine learning demo project. Not a medical tool. Please consult a real doctor.
+            </div>
+        </div>
+
+        <!-- Error box -->
+        <div id="errorBox" class="error-box" style="display:none;">
+            <b>Error:</b> <span id="errorMsg"></span>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <p>SugarTrace &mdash; A Student ML Project | Built with Flask + Scikit-learn</p>
+    </div>
+
+    <script src="/frontend/script.js"></script>
+</body>
+</html>
