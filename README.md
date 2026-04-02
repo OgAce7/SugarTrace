@@ -53,10 +53,6 @@ python train_model.py
 python app.py
 ```
 
-Open: http://localhost:5000
-
----
-
 ## 🧹 Notes
 
 * Zero values are treated as missing and replaced
