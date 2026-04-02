@@ -1,7 +1,3 @@
-# preprocess.py
-# This file handles all the data cleaning and preparation steps
-# We clean the data before training the model
-
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
@@ -9,7 +5,6 @@ import pickle
 import os
 
 def load_data(csv_path):
-    # load the dataset from the given path
     df = pd.read_csv(csv_path)
     print("Dataset loaded. Shape:", df.shape)
     print("Columns:", df.columns.tolist())
@@ -17,9 +12,6 @@ def load_data(csv_path):
 
 
 def fix_zero_values(df):
-    # Some columns have 0 values that don't make sense medically
-    # For example, Glucose = 0 or BloodPressure = 0 is not realistic
-    # We replace those with NaN and then fill with median
 
     cols_with_zeros = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
 
@@ -28,10 +20,8 @@ def fix_zero_values(df):
         zeros = (df[col] == 0).sum()
         print(f"  {col}: {zeros} zeros")
 
-    # replace 0 with NaN in these columns
     df[cols_with_zeros] = df[cols_with_zeros].replace(0, np.nan)
 
-    # fill NaN with median value of each column
     for col in cols_with_zeros:
         median_val = df[col].median()
         df[col] = df[col].fillna(median_val)
@@ -41,7 +31,6 @@ def fix_zero_values(df):
 
 
 def split_features_labels(df):
-    # separate features (X) and target label (y)
     X = df.drop('Outcome', axis=1)
     y = df['Outcome']
     print(f"\nFeatures shape: {X.shape}")
@@ -50,8 +39,6 @@ def split_features_labels(df):
 
 
 def scale_features(X_train, X_test):
-    # scale features so they are on similar range
-    # this helps logistic regression perform better
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
@@ -59,7 +46,6 @@ def scale_features(X_train, X_test):
 
 
 def save_scaler(scaler, path='models/scaler.pkl'):
-    # save scaler so we can use it later during prediction
     os.makedirs('models', exist_ok=True)
     with open(path, 'wb') as f:
         pickle.dump(scaler, f)
