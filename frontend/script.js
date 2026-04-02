@@ -1,7 +1,3 @@
-// script.js - SugarTrace Frontend Logic
-// Handles form submission, API calls and showing results
-
-// Example patient data to demo the form quickly
 var exampleData = {
     Pregnancies: 3,
     Glucose: 148,
@@ -13,7 +9,6 @@ var exampleData = {
     Age: 50
 };
 
-// Fill the form with example data
 function fillExample() {
     document.getElementById('Pregnancies').value = exampleData.Pregnancies;
     document.getElementById('Glucose').value = exampleData.Glucose;
@@ -25,28 +20,22 @@ function fillExample() {
     document.getElementById('Age').value = exampleData.Age;
 }
 
-// Clear all form fields
 function clearForm() {
     var fields = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
                   'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'];
     for (var i = 0; i < fields.length; i++) {
         document.getElementById(fields[i]).value = '';
     }
-    // also hide result boxes
     document.getElementById('resultBox').style.display = 'none';
     document.getElementById('errorBox').style.display = 'none';
 }
 
-// Collect form data and send to /predict endpoint
 function predict() {
-    // hide previous results
     document.getElementById('resultBox').style.display = 'none';
     document.getElementById('errorBox').style.display = 'none';
 
-    // get selected model
     var selectedModel = document.getElementById('modelSelect').value;
 
-    // read all input values
     var inputData = {
         model: selectedModel,
         Pregnancies: parseFloat(document.getElementById('Pregnancies').value),
@@ -59,7 +48,6 @@ function predict() {
         Age: parseFloat(document.getElementById('Age').value)
     };
 
-    // simple validation - check if any value is missing or NaN
     var fields = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
                   'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'];
     for (var i = 0; i < fields.length; i++) {
@@ -69,7 +57,6 @@ function predict() {
         }
     }
 
-    // send POST request to backend
     fetch('/predict', {
         method: 'POST',
         headers: {
@@ -92,13 +79,10 @@ function predict() {
     });
 }
 
-
-// Display the prediction result
 function showResult(data) {
     var resultBox = document.getElementById('resultBox');
     resultBox.style.display = 'block';
 
-    // set result label
     var resultLabel = document.getElementById('resultLabel');
     if (data.prediction === 1) {
         resultLabel.textContent = '⚠️ Diabetic';
@@ -108,10 +92,8 @@ function showResult(data) {
         resultLabel.className = 'result-label not-diabetic';
     }
 
-    // probability score
     document.getElementById('probScore').textContent = data.probability + '%';
 
-    // risk level
     var riskEl = document.getElementById('riskLevel');
     riskEl.textContent = data.risk_level;
     if (data.risk_level === 'High') {
@@ -121,16 +103,13 @@ function showResult(data) {
     } else {
         riskEl.style.color = '#27ae60';
     }
-
-    // model name
+    
     document.getElementById('modelUsed').textContent = data.model_used;
 
-    // update risk bar
     var barFill = document.getElementById('riskBar');
     barFill.style.width = data.probability + '%';
     document.getElementById('riskBarLabel').textContent = data.probability + '% chance of diabetes';
 
-    // feature importance (only for random forest)
     var featSection = document.getElementById('featureImportanceSection');
     var featList = document.getElementById('featureImportanceList');
     featList.innerHTML = '';
@@ -138,11 +117,9 @@ function showResult(data) {
     if (data.feature_importance && Object.keys(data.feature_importance).length > 0) {
         featSection.style.display = 'block';
 
-        // sort features by importance
         var items = Object.entries(data.feature_importance);
         items.sort(function(a, b) { return b[1] - a[1]; });
 
-        // find max importance for scaling bars
         var maxVal = items[0][1];
 
         for (var i = 0; i < items.length; i++) {
@@ -164,17 +141,13 @@ function showResult(data) {
         featSection.style.display = 'none';
     }
 
-    // scroll to result
     resultBox.scrollIntoView({ behavior: 'smooth' });
 }
 
-
-// Load model performance info
 function loadModelInfo() {
     var infoBox = document.getElementById('modelInfoBox');
     var content = document.getElementById('modelInfoContent');
 
-    // toggle visibility
     if (infoBox.style.display === 'block') {
         infoBox.style.display = 'none';
         return;
@@ -191,11 +164,9 @@ function loadModelInfo() {
             return;
         }
 
-        // build a simple table
         var html = '<table class="stats-table"><thead><tr><th>Model</th><th>Accuracy (%)</th><th>Recall (%)</th><th>ROC-AUC (%)</th></tr></thead><tbody>';
         for (var modelName in data) {
             var m = data[modelName];
-            // convert underscore to space for readability
             var displayName = modelName.replace(/_/g, ' ');
             html += '<tr>' +
                 '<td>' + displayName + '</td>' +
@@ -212,8 +183,6 @@ function loadModelInfo() {
     });
 }
 
-
-// Show error message
 function showError(msg) {
     var errorBox = document.getElementById('errorBox');
     document.getElementById('errorMsg').textContent = msg;
