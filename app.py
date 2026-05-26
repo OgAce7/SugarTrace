@@ -7,9 +7,11 @@ app = Flask(__name__, static_folder='frontend')
 
 print("Loading models...")
 
+# Check for model existence before attempting to load to prevent crashes
 if not os.path.exists('models/random_forest.pkl'):
     print("WARNING: Models not found. Please run train_model.py first!")
 
+# Loading global models, we load these once at startup so the API is responsive for every request! Pretty handy ngl hehe
 try:
     with open('models/logistic_regression.pkl', 'rb') as f:
         lr_model = pickle.load(f)
@@ -34,6 +36,7 @@ except:
     scaler = None
     print("Could not load scaler.")
 
+# Loading feature names ensures the JSON keys from the frontend map correctly to the order the model expects.
 try:
     with open('models/feature_names.pkl', 'rb') as f:
         feature_names = pickle.load(f)
@@ -52,32 +55,41 @@ except:
     print("Could not load model results.")
     
 def get_feature_importance():
+    """Extracts feature importance from the Random Forest model."""
     if rf_model is None:
         return {}
     importances = rf_model.feature_importances_
-    importance_dict = {}
-    for i, name in enumerate(feature_names):
-        importance_dict[name] = round(float(importances[i]), 4)
+    importance_dict = {name: round(float(importances[i]), 4) for i, name in enumerate(feature_names)}
     return importance_dict
 
+# Various routes and paths
 @app.route('/')
 def index():
+    """Serves the main frontend page."""
     return send_from_directory('frontend', 'index.html')
 
 @app.route('/frontend/<path:filename>')
 def serve_static(filename):
+    """Serves CSS/JS files."""
     return send_from_directory('frontend', filename)
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    """
+    Main prediction endpoint.
+    1. Validates input JSON.
+    2. Scales data if a scaler exists.
+    3. Selects model based on user request.
+    4. Returns prediction, probability, and risk level.
+    """
     try:
         data = request.get_json()
-
         if not data:
             return jsonify({'error': 'No data received'}), 400
 
         model_choice = data.get('model', 'random_forest')
 
+        # Mapping JSON keys to list in exact order expected by model
         input_features = []
         for fname in feature_names:
             val = data.get(fname)
@@ -87,11 +99,13 @@ def predict():
 
         input_array = np.array(input_features).reshape(1, -1)
 
+        # Applying same scaling used during training so it's consistent 
         if scaler is not None:
             input_scaled = scaler.transform(input_array)
         else:
             input_scaled = input_array 
 
+        # Model selection logic (hmmm)
         if model_choice == 'logistic_regression' and lr_model is not None:
             selected_model = lr_model
             model_name = 'Logistic Regression'
@@ -101,17 +115,13 @@ def predict():
         else:
             return jsonify({'error': 'No model available. Run train_model.py first.'}), 500
 
-        prediction = selected_model.predict(input_scaled)[0]
-        probability = selected_model.predict_proba(input_scaled)[0][1]
+        # Inference 
+        prediction = int(selected_model.predict(input_scaled)[0])
+        probability = float(selected_model.predict_proba(input_scaled)[0][1])
 
-        prediction = int(prediction)
-        probability = float(probability)
+        result_label = "Diabetic" if prediction == 1 else "Not Diabetic"
 
-        if prediction == 1:
-            result_label = "Diabetic"
-        else:
-            result_label = "Not Diabetic"
-
+        # Mapping probability to business logic risk levels (returns label based on the score
         if probability >= 0.7:
             risk_level = "High"
         elif probability >= 0.4:
@@ -119,20 +129,16 @@ def predict():
         else:
             risk_level = "Low"
 
-        importances = {}
-        if model_choice == 'random_forest':
-            importances = get_feature_importance()
+        importances = get_feature_importance() if model_choice == 'random_forest' else {}
 
-        response = {
+        return jsonify({
             'prediction': prediction,
             'result': result_label,
             'probability': round(probability * 100, 2), 
             'risk_level': risk_level,
             'model_used': model_name,
             'feature_importance': importances
-        }
-
-        return jsonify(response)
+        })
 
     except Exception as e:
         print("Error during prediction:", str(e))
@@ -140,21 +146,19 @@ def predict():
 
 @app.route('/model-info', methods=['GET'])
 def model_info():
+    """Returns stored metrics (accuracy, recall, etc.) for dashboard display."""
     if not model_results:
         return jsonify({'error': 'Model results not available'}), 500
 
     info = {}
     for model_name, metrics in model_results.items():
-        if model_name == 'feature_importance':
-            continue
+        if model_name == 'feature_importance': continue
         info[model_name] = {
             'accuracy': round(metrics['accuracy'] * 100, 2),
             'recall': round(metrics['recall'] * 100, 2),
             'roc_auc': round(metrics['roc_auc'] * 100, 2)
         }
-
     return jsonify(info)
-
 
 if __name__ == '__main__':
     print("\nStarting SugarTrace server...")
