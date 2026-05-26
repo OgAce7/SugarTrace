@@ -155,13 +155,13 @@ button:hover { transform: translateY(-1px); filter: brightness(95%); }
 
 .footer {
     background: #2d3436;
-    border-top: 4px solid var(--highlight); /* Connects footer to the theme */
+    border-top: 4px solid var(--highlight); 
     padding: 40px;
     color: #b2bec3;
     text-align: center;
 }
 
 .footer b {
-    color: #ff8fa3; /* A darker pink for your name to pop against the dark footer */
+    color: #ff8fa3; 
     text-transform: uppercase;
 }
