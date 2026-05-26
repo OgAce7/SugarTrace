@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SugarTrace - Diabetes Prediction</title>
-    <link rel="stylesheet" href="/frontend/style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-
+    <!-- Header section -->
     <div class="header">
         <h1>🩺 SugarTrace</h1>
         <p>Advanced Diabetes Prediction System</p>
@@ -16,44 +16,58 @@
 
     <div class="container">
 
+        <!-- Model Selection Section, allows user to choose which ML model to use -->
         <div class="model-selector">
             <div class="selector-group">
                 <label>AI Model Strategy:</label>
                 <select id="modelSelect">
+                    <!-- Setting Random Forest as the default recommended model -->
                     <option value="random_forest">Random Forest (Recommended)</option>
+                    <!-- Alternative model -->
                     <option value="logistic_regression">Logistic Regression</option>
                 </select>
             </div>
-            <button onclick="loadModelInfo()" class="btn-small">Analytics & Stats</button>
+
+            <!-- Button to show model performance metrics -->
+            <button onclick="loadModelInfo()" class="btn-small">
+                Analytics & Stats
+            </button>
         </div>
 
+        <!-- Hidden info box for displaying model analytics -->
         <div id="modelInfoBox" class="info-box" style="display:none;">
             <h3>Model Performance Metrics</h3>
             <div id="modelInfoContent">Gathering data...</div>
         </div>
 
+        <!-- Patient Input Form Section -->
         <div class="form-section">
             <div class="form-header">
                 <h2>Patient Clinical Data</h2>
                 <p>Please enter the most recent laboratory results below.</p>
             </div>
 
+            <!-- Grid layout for patient feature inputs -->
             <div class="form-grid">
+                <!-- Number of pregnancies -->
                 <div class="form-group">
                     <label>Pregnancies</label>
                     <input type="number" id="Pregnancies" placeholder="0" min="0">
                     <small>History of pregnancies</small>
                 </div>
+                <!-- Blood glucose input -->
                 <div class="form-group">
                     <label>Glucose (mg/dL)</label>
                     <input type="number" id="Glucose" placeholder="120">
                     <small>Plasma glucose (2hr test)</small>
                 </div>
+                <!-- Blood pressure input -->
                 <div class="form-group">
                     <label>Blood Pressure</label>
                     <input type="number" id="BloodPressure" placeholder="80">
                     <small>Diastolic pressure (mm Hg)</small>
                 </div>
+                <!-- Skin thickness measurement -->
                 <div class="form-group">
                     <div class="label-row">
                         <label>Skin Thickness</label>
@@ -61,42 +75,56 @@
                     <input type="number" id="SkinThickness" placeholder="20">
                     <small>Triceps fold (mm)</small>
                 </div>
+                <!-- Insulin level -->
                 <div class="form-group">
                     <label>Insulin (μU/mL)</label>
                     <input type="number" id="Insulin" placeholder="80">
                     <small>2-hour serum insulin</small>
                 </div>
+                <!-- BMI -->
                 <div class="form-group">
                     <label>BMI</label>
                     <input type="number" id="BMI" placeholder="24.5" step="0.1">
                     <small>Body Mass Index</small>
                 </div>
+                <!-- Genetic diabetes risk score -->
                 <div class="form-group">
                     <label>Pedigree Score</label>
                     <input type="number" id="DiabetesPedigreeFunction" placeholder="0.47" step="0.01">
                     <small>Genetic risk factor</small>
                 </div>
+                <!-- Age input -->
                 <div class="form-group">
                     <label>Age</label>
                     <input type="number" id="Age" placeholder="30">
                     <small>Years since birth</small>
                 </div>
             </div>
-
+            <!-- Action buttons -->
             <div class="button-row">
-                <button onclick="predict()" class="btn-predict">🔍 Generate Prediction</button>
-                <button onclick="fillExample()" class="btn-example">Auto-Fill Demo</button>
-                <button onclick="clearForm()" class="btn-clear">Reset</button>
+                <!-- Sending input data for prediction -->
+                <button onclick="predict()" class="btn-predict">
+                    🔍 Generate Prediction
+                </button>
+                <!-- Fills form with sample demo data -->
+                <button onclick="fillExample()" class="btn-example">
+                    Auto-Fill Demo
+                </button>
+                <!-- Clears all entered values -->
+                <button onclick="clearForm()" class="btn-clear">
+                    Reset
+                </button>
             </div>
         </div>
 
+        <!-- Prediction Results Section, initially hidden until prediction is generated -->
         <div id="resultBox" class="result-box" style="display:none;">
             <div class="result-header">
                 <h2>Clinical Assessment</h2>
             </div>
-            
+            <!-- Main result label (Diabetic / Non-Diabetic) -->
             <div id="resultLabel" class="result-label"></div>
-
+            <!-- Confidence + severity details -->
             <div class="result-details">
                 <div class="detail-item">
                     <span class="detail-title">Confidence Score</span>
@@ -108,6 +136,7 @@
                 </div>
             </div>
 
+            <!-- Visual probability/risk bar -->
             <div class="risk-bar-container">
                 <label>Visual Risk Assessment:</label>
                 <div class="risk-bar-bg">
@@ -116,25 +145,32 @@
                 <span id="riskBarLabel">0%</span>
             </div>
 
+            <!-- Feature importance explanation section, useful especially for Random Forest interpretability -->
             <div id="featureImportanceSection" style="display:none;">
                 <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
                 <h3>Key Influence Factors</h3>
-                <p style="font-size:12px; color:gray; margin-bottom: 10px;">The variables below most affected this specific prediction.</p>
+                <!-- Explanation text -->
+                <p style="font-size:12px; color:gray; margin-bottom: 10px;">
+                    The variables below most affected this specific prediction.
+                </p>
+                <!-- Dynamic feature importance list -->
                 <div id="featureImportanceList"></div>
             </div>
         </div>
 
+        <!-- Error display box, shown if backend/API/model fails -->
         <div id="errorBox" class="error-box" style="display:none;">
             <strong>System Error:</strong> <span id="errorMsg"></span>
         </div>
 
     </div>
 
+    <!-- Footer -->
     <div class="footer">
         <p>Developed by <b>Devansh Tiwari</b></p>
-        <p style="font-size: 10px; opacity: 0.5;">(Assisted by Avi Khabiya])</p>
     </div>
 
-    <script src="/frontend/script.js"></script>
+    <!-- External JavaScript logic -->
+    <script src="script.js"></script>
 </body>
 </html>
