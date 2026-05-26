@@ -1,4 +1,3 @@
-# Loading data and model training script
 import kagglehub
 import pandas as pd
 import numpy as np
@@ -10,14 +9,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, recall_score, roc_auc_score, classification_report
 
-# importing preprocessing functions
-from preprocess import load_data, fix_zero_values, split_features_labels, scale_features, save_scaler
+from preprocess import load_data, fix_zero_values, split_features_labels, scale_features, save_scaler         # importing preprocessing functions
 
 print("=" * 50)
 print("SugarTrace - Diabetes Prediction Model Training")
 print("=" * 50)
 
-# Loading dataset
+# Getting dataset from kaggle :D
 print("\n[Step 1] Downloading dataset from Kaggle...")
 path = kagglehub.dataset_download("uciml/pima-indians-diabetes-database")
 print("Path to dataset files:", path)
@@ -34,30 +32,30 @@ if csv_file is None:
 print(f"Found CSV: {csv_file}")
 df = load_data(csv_file)
 
-# Data cleaning
+# Data cleaning :/
 print("\n[Step 2] Cleaning data (fixing zero values)...")
 df = fix_zero_values(df)
 
-# Data splitting
+# splitting data for easier training 
 print("\n[Step 3] Splitting features and labels...")
 X, y = split_features_labels(df)
 
 feature_names = X.columns.tolist()
 print("Feature names:", feature_names)
 
-# Training and Testing
+# Training and Testing (Wowww)
 print("\n[Step 4] Splitting into train and test sets...")
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 print(f"Train size: {X_train.shape[0]}, Test size: {X_test.shape[0]}")
 
-# Feature Scaling
+# Scaling features to standardize the range of independent variables ;)
 print("\n[Step 5] Scaling features...")
 X_train_scaled, X_test_scaled, scaler = scale_features(X_train, X_test)
 save_scaler(scaler)
 
-# LR model training
+# Logistic Regression model training :o
 print("\n[Step 6] Training Logistic Regression model...")
 lr_model = LogisticRegression(max_iter=1000, random_state=42)
 lr_model.fit(X_train_scaled, y_train)
@@ -76,7 +74,7 @@ print(f"ROC-AUC  : {lr_auc:.4f}")
 print("\nClassification Report:")
 print(classification_report(y_test, lr_preds))
 
-# RF model training
+# Random Forest model training \o/
 print("\n[Step 7] Training Random Forest model...")
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
 rf_model.fit(X_train_scaled, y_train)
@@ -95,7 +93,7 @@ print(f"ROC-AUC  : {rf_auc:.4f}")
 print("\nClassification Report:")
 print(classification_report(y_test, rf_preds))
 
-# Feature importance
+# Feature importance - aka assinging weights so the model knows how much each feature contributes to the prediction :p
 print("\n[Step 8] Feature Importances (Random Forest):")
 importances = rf_model.feature_importances_
 feature_importance_dict = dict(zip(feature_names, importances))
@@ -103,7 +101,7 @@ sorted_features = sorted(feature_importance_dict.items(), key=lambda x: x[1], re
 for feat, imp in sorted_features:
     print(f"  {feat}: {imp:.4f}")
 
-# Saving models
+# Saving models because they are important duhh
 print("\n[Step 9] Saving models...")
 os.makedirs('models', exist_ok=True)
 
@@ -119,7 +117,7 @@ with open('models/feature_names.pkl', 'wb') as f:
     pickle.dump(feature_names, f)
 print("Feature names saved.")
 
-# Results
+# Results (yayy)
 results = {
     'logistic_regression': {
         'accuracy': lr_accuracy,
