@@ -17,6 +17,15 @@ A simple student ML project that predicts whether a person is likely to have dia
 
 ---
 
+## 📸 Proect Preview
+<div align="center">
+  <table>
+     <td align="center"><b>Dashboard</b><br><img src="Dashboard.png" width="400"></td>
+  </table>
+</div>
+
+---
+
 ## 🧠 Models Used
 
 * Logistic Regression (baseline)
